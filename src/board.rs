@@ -7,7 +7,8 @@ use crate::piece::Piece;
 pub struct Board {
     pieces: [BitBoard; 6], // pawns, knight, bishops, rooks, queens, kings
     colors: [BitBoard; 2], // white, black
-    combined: BitBoard, // all pieces of all colors
+    combined: BitBoard, // all pieces of all colors,
+    turn: Color,
 }
 
 impl Default for Board {
@@ -26,6 +27,7 @@ impl Default for Board {
                 BitBoard::new(0xffff000000000000), // black
             ],
             combined: BitBoard::new(0xffff00000000ffff),
+            turn: Color::White,
         }
     }
 }
