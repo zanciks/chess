@@ -1,8 +1,9 @@
 #![allow(dead_code)]
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Deref, DerefMut, Not, Shl, Shr};
+use rand::Rng;
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct BitBoard(u64);
 
 impl BitBoard {
@@ -23,6 +24,11 @@ impl BitBoard {
     // flip the value at index
     pub fn flip(&mut self, index: u8) {
         self.0 ^= 1u64 << index;
+    }
+    // random bitboard, mainly for testing
+    pub fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        BitBoard::new(rng.gen())
     }
 }
 
@@ -106,20 +112,23 @@ impl Shl<u64> for BitBoard {
     }
 }
 
-pub const A_FILE: BitBoard = BitBoard(0x0101010101010101);
-pub const B_FILE: BitBoard = BitBoard(0x0202020202020202);
-pub const C_FILE: BitBoard = BitBoard(0x0404040404040404);
-pub const D_FILE: BitBoard = BitBoard(0x0808080808080808);
-pub const E_FILE: BitBoard = BitBoard(0x1010101010101010);
-pub const F_FILE: BitBoard = BitBoard(0x2020202020202020);
-pub const G_FILE: BitBoard = BitBoard(0x4040404040404040);
-pub const H_FILE: BitBoard = BitBoard(0x8080808080808080);
+pub const A_FILE: BitBoard = BitBoard(0x0101_0101_0101_0101);
+pub const B_FILE: BitBoard = BitBoard(0x0202_0202_0202_0202);
+pub const C_FILE: BitBoard = BitBoard(0x0404_0404_0404_0404);
+pub const D_FILE: BitBoard = BitBoard(0x0808_0808_0808_0808);
+pub const E_FILE: BitBoard = BitBoard(0x1010_1010_1010_1010);
+pub const F_FILE: BitBoard = BitBoard(0x2020_2020_2020_2020);
+pub const G_FILE: BitBoard = BitBoard(0x4040_4040_4040_4040);
+pub const H_FILE: BitBoard = BitBoard(0x8080_8080_8080_8080);
 
-pub const RANK_1: BitBoard = BitBoard(0x00000000000000FF);
-pub const RANK_2: BitBoard = BitBoard(0x000000000000FF00);
-pub const RANK_3: BitBoard = BitBoard(0x0000000000FF0000);
-pub const RANK_4: BitBoard = BitBoard(0x00000000FF000000);
-pub const RANK_5: BitBoard = BitBoard(0x000000FF00000000);
-pub const RANK_6: BitBoard = BitBoard(0x0000FF0000000000);
-pub const RANK_7: BitBoard = BitBoard(0x00FF000000000000);
-pub const RANK_8: BitBoard = BitBoard(0xFF00000000000000);
+pub const RANK_1: BitBoard = BitBoard(0x0000_0000_0000_00ff);
+pub const RANK_2: BitBoard = BitBoard(0x0000_0000_0000_ff00);
+pub const RANK_3: BitBoard = BitBoard(0x0000_0000_00ff_0000);
+pub const RANK_4: BitBoard = BitBoard(0x0000_0000_ff00_0000);
+pub const RANK_5: BitBoard = BitBoard(0x0000_00ff_0000_0000);
+pub const RANK_6: BitBoard = BitBoard(0x0000_ff00_0000_0000);
+pub const RANK_7: BitBoard = BitBoard(0x00ff_0000_0000_0000);
+pub const RANK_8: BitBoard = BitBoard(0xff00_0000_0000_0000);
+
+pub const FULL_BB: BitBoard = BitBoard(0xffff_ffff_ffff_ffff);
+pub const EMPTY_BB: BitBoard = BitBoard(0);

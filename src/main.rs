@@ -1,9 +1,11 @@
 mod bitboard;
-mod square;
 mod move_gen;
+mod board;
+mod piece;
+mod color;
+mod r#move;
 
 fn main() {
-    for i in 0..64 {
-        move_gen::generate_knight_mask(i);
-    }
+    let bitboard = bitboard::EMPTY_BB;
+    move_gen::generate_queen_mask(27, bitboard);
 }
