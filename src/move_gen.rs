@@ -67,8 +67,8 @@ pub fn generate_rook_mask(square: u8, combined: BitBoard) -> BitBoard {
     let mut piece_board = EMPTY_BB;
     piece_board.set(square);
 
-    let rank = square % 8;
-    let file= square / 8;
+    let rank = square / 8;
+    let file= square % 8;
 
     // north movement
     for i in rank + 1..8 {
@@ -106,38 +106,37 @@ pub fn generate_bishop_mask(square: u8, combined: BitBoard) -> BitBoard {
     let mut piece_board = EMPTY_BB;
     piece_board.set(square);
 
-    let rank = square % 8;
-    let file= square / 8;
+    let rank = square / 8;
+    let file= square % 8;
 
     // North-East movement
     for i in 1..8 {
         if (rank + i) >= 8 || (file + i) >= 8 {break}
-        let offset = (8 * i + i) as u64;
+        let offset = (9 * i) as u64;
         attacks |= piece_board << offset;
         if combined & (piece_board << offset) != EMPTY_BB {break}
     }
 
     // South-East movement
     for i in 1..8 {
-        if rank < i || file + i + 1 >= 8 {break}
-        let offset = (8 * (rank - i) + (file + i + 1)) as u64;
+        if i > rank || (file + i) >= 8 {break}
+        let offset = 7 * i as u64;
         attacks |= piece_board >> offset;
         if combined & (piece_board >> offset) != EMPTY_BB {break}
     }
-
 
     // South-West movement
     for i in 1..8 {
-        if rank < i || file < i {break}
-        let offset = (square - (8 * (rank - i) + (file - i))) as u64;
+        if i > rank || i > file {break}
+        let offset = 9 * i as u64;
         attacks |= piece_board >> offset;
         if combined & (piece_board >> offset) != EMPTY_BB {break}
     }
 
-    // North-West movement {
+    // North-West movement
     for i in 1..8 {
-        if (rank + i) >= 8 || file < i {break}
-        let offset = (8 * (rank + i) + (file - i) - square) as u64;
+        if (rank + i) >= 8 || i > file {break}
+        let offset = 7 * i as u64;
         attacks |= piece_board << offset;
         if combined & (piece_board << offset) != EMPTY_BB {break}
     }
