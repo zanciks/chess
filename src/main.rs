@@ -6,7 +6,9 @@ mod color;
 mod moves;
 
 fn main() {
-    for i in (0..64).rev() {
-        println!("{}", move_gen::generate_bishop_mask(i, bitboard::BitBoard::default()));
+    let board = board::Board::default();
+    println!("{}", board);
+    for i in board.generate_moves() {
+        println!("{:?}", i);
     }
 }

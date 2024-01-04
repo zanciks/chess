@@ -30,6 +30,21 @@ impl BitBoard {
         let mut rng = rand::thread_rng();
         BitBoard::new(rng.gen())
     }
+    pub fn find_set_bits(&self) -> Vec<u8> {
+        let mut binding = self.value();
+        let mut indices = Vec::new();
+        let mut index = 0;
+
+        while binding > 0 {
+            if binding & 1 == 1 {
+                indices.push(index as u8);
+            }
+
+            binding >>= 1;
+            index += 1;
+        }
+        return indices
+    }
 }
 
 impl Default for BitBoard {

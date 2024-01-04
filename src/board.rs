@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 
+use std::fmt::{Display, Formatter};
 use crate::bitboard::BitBoard;
 use crate::color::Color;
+use crate::move_gen::{generate_bishop_mask, generate_black_pawn_mask, generate_king_mask, generate_knight_mask, generate_queen_mask, generate_rook_mask, generate_white_pawn_mask};
+use crate::moves::Move;
 use crate::piece::Piece;
 
 pub struct Board {
@@ -72,5 +75,63 @@ impl Board {
             }
         }
         return None;
+    }
+    pub fn generate_moves(&self) -> Vec<Move> {
+        let mut output_moves: Vec<Move> = vec![];
+        let friendlies = match self.turn {
+            Color::White => self.colors[0],
+            Color::Black => self.colors[1]
+        };
+
+        for square in 0..64 {
+            if let Some(piece) = self.piece_at(square) {
+                if self.color_at(square) == Some(self.turn) {
+                    let movement_mask = match piece {
+                        Piece::Knight => generate_knight_mask(square),
+                        Piece::Bishop => generate_bishop_mask(square, self.combined),
+                        Piece::Rook => generate_rook_mask(square, self.combined),
+                        Piece::Queen => generate_queen_mask(square, self.combined),
+                        Piece::King => generate_king_mask(square),
+                        Piece::Pawn => match self.turn {
+                            Color::White => generate_white_pawn_mask(square, self.colors[1]),
+                            Color::Black => generate_black_pawn_mask(square, self.colors[0]),
+                        },
+                    };
+                    let movement_bitboard = movement_mask & !friendlies;
+                    output_moves.append(&mut Move::from_square_bitboard(square, movement_bitboard))
+                }
+            }
+        }
+        return output_moves;
+    }
+}
+
+impl Display for Board {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut output = "".to_string();
+        for rank in (0..8).rev() {
+            output.push('\n');
+            for file in 0..8 {
+                let index = rank * 8 + file;
+                output.push(match (self.piece_at(index), self.color_at(index)) {
+                    (Some(Piece::Pawn),   Some(Color::White)) => 'P',
+                    (Some(Piece::Knight), Some(Color::White)) => 'N',
+                    (Some(Piece::Bishop), Some(Color::White)) => 'B',
+                    (Some(Piece::Rook),   Some(Color::White)) => 'R',
+                    (Some(Piece::Queen),  Some(Color::White)) => 'Q',
+                    (Some(Piece::King),   Some(Color::White)) => 'K',
+
+                    (Some(Piece::Pawn),   Some(Color::Black)) => 'p',
+                    (Some(Piece::Knight), Some(Color::Black)) => 'n',
+                    (Some(Piece::Bishop), Some(Color::Black)) => 'b',
+                    (Some(Piece::Rook),   Some(Color::Black)) => 'r',
+                    (Some(Piece::Queen),  Some(Color::Black)) => 'q',
+                    (Some(Piece::King),   Some(Color::Black)) => 'k',
+                    _ => '.',
+                });
+                output.push(' ');
+            }
+        }
+        write!(f, "{}", output)
     }
 }
